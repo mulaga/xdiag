@@ -13,7 +13,7 @@
 namespace xdiag {
 
 eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
-                                   block_variant_t const &block, State &state0,
+                                   block_variant_t const &block, State const &state0,
                                    int64_t neigvals, double precision,
                                    int64_t max_iterations, bool force_complex,
                                    double deflation_tol) try {
@@ -26,11 +26,12 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
 
   bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex ||
               state0.iscomplex();
-  if (cplx) {
-    state0.make_complex();
-  }
+
   // copy the starting state
   State state1 = state0;
+  if (cplx) {
+    state1.make_complex();
+  }
 
   // Perform first run to compute eigenvalues
   auto r = eigvals_lanczos(bonds, block, state1, neigvals, precision,
@@ -59,6 +60,7 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
   int64_t iter = 1;
   // Setup complex Lanczos run
   if (cplx) {
+    state1.make_complex();
     arma::cx_vec v0 = state1.vectorC(0, false);
     auto mult = [&iter, &bonds, &block](arma::cx_vec const &v,
                                         arma::cx_vec &w) {
@@ -108,6 +110,7 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
   XDIAG_RETHROW(e);
   return eigs_lanczos_result_t();
 }
+
 
 // starting from random vector
 eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,

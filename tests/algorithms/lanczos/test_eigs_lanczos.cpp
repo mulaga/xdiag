@@ -35,9 +35,9 @@ TEST_CASE("eigs_lanczos", "[lanczos]") {
       arma::vec evals_mat;
       arma::eig_sym(evals_mat, H);
 
-      XDIAG_SHOW(bondlist);
-      XDIAG_SHOW(block);
-      XDIAG_SHOW(max_num_eigenvalue);
+      // XDIAG_SHOW(bondlist);
+      // XDIAG_SHOW(block);
+      // XDIAG_SHOW(max_num_eigenvalue);
 
       // Compute evec with Lanczos
       auto res = eigs_lanczos(bondlist, block, max_num_eigenvalue);
