@@ -27,4 +27,5 @@ eigs_lanczos(BondList const &bonds, block_variant_t const &block, State &state0,
              int64_t max_iterations = 1000, bool force_complex = false,
              double deflation_tol = 1e-7);
 
+
 } // namespace xdiag

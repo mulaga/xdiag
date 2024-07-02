@@ -11,6 +11,8 @@ title: Overview
 |:---------------------------------|:--------------------------------------------------------------------|----------------------------------:|
 | [eigval0](algorithms/eigval0.md) | Computes the lowest lying eigenvalue of an operator                 | :simple-cplusplus: :simple-julia: |
 | [eig0](algorithms/eig0.md)       | Computes the lowest lying eigenvalue and eigenvector of an operator | :simple-cplusplus: :simple-julia: |
+| [eigvals_lanczos](algorithms/eigvals_lanczos.md)       | Computes the spectrum of an operator | :simple-cplusplus: :simple-julia: |
+| [eigs_lanczos](algorithms/eigs_lanczos.md)       | Computes the eigenstates of an operator | :simple-cplusplus: :simple-julia: |
 
 ## Algebra
 |                             |                                                                  |                                   |

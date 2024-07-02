@@ -20,17 +20,55 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
                 int64_t max_iterations, bool force_complex,
                 double deflation_tol) try {
 
+  // copies startate
+  State state1 = state0;
+
+  auto r =
+      eigvals_lanczos_inplace(bonds, block, state1, neigvals, precision,
+                              max_iterations, force_complex, deflation_tol);
+  return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
+
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return eigvals_lanczos_result_t();
+}
+
+eigvals_lanczos_result_t
+eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
+                int64_t neigvals, double precision, int64_t max_iterations,
+                bool force_complex, double deflation_tol,
+                int64_t random_seed) try {
+
+  bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex;
+  State state0(block, !cplx);
+  fill(state0, RandomState(random_seed));
+
+  auto r =
+      eigvals_lanczos_inplace(bonds, block, state0, neigvals, precision,
+                              max_iterations, force_complex, deflation_tol);
+
+  return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
+
+} catch (Error const &e) {
+  XDIAG_RETHROW(e);
+  return eigvals_lanczos_result_t();
+}
+
+eigvals_lanczos_result_t
+eigvals_lanczos_inplace(BondList const &bonds, block_variant_t const &block,
+                        State &state0, int64_t neigvals, double precision,
+                        int64_t max_iterations, bool force_complex,
+                        double deflation_tol) try {
+
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
   }
   if (!bonds.ishermitian()) {
     XDIAG_THROW("Input BondList is not hermitian");
   }
+
   bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex ||
               state0.iscomplex();
-  if (state0.iscomplex() && !iscomplex(block)) {
-    Log(1, "warning: starting REAL block diagonalization with COMPLEX startstate");
-  }
 
   auto converged = [neigvals, precision](Tmatrix const &tmat) -> bool {
     return lanczos::converged_eigenvalues(tmat, neigvals, precision);
@@ -78,35 +116,10 @@ eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
                          deflation_tol);
   }
   return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
-} catch (Error const &e) {
-  XDIAG_RETHROW(e);
-  return eigvals_lanczos_result_t();
-}
-
-eigvals_lanczos_result_t
-eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
-                int64_t neigvals, double precision, int64_t max_iterations,
-                bool force_complex, double deflation_tol,
-                int64_t random_seed) try {
-
-  if (neigvals < 1) {
-    XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
-  }
-  if (!bonds.ishermitian()) {
-    XDIAG_THROW("Input BondList is not hermitian");
-  }
-
-  bool cplx = bonds.iscomplex() || iscomplex(block) || force_complex;
-  State state0(block, !cplx);
-  fill(state0, RandomState(random_seed));
-
-  auto r = eigvals_lanczos(bonds, block, state0, neigvals, precision,
-                           max_iterations, force_complex, deflation_tol);
-
-  return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
 
 } catch (Error const &e) {
   XDIAG_RETHROW(e);
   return eigvals_lanczos_result_t();
 }
+
 } // namespace xdiag
