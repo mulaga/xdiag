@@ -16,7 +16,7 @@ namespace xdiag {
 
 eigvals_lanczos_result_t
 eigvals_lanczos(BondList const &bonds, block_variant_t const &block,
-                State &state0, int64_t neigvals, double precision,
+                State const &state0, int64_t neigvals, double precision,
                 int64_t max_iterations, bool force_complex,
                 double deflation_tol) try {
 

@@ -13,9 +13,10 @@
 namespace xdiag {
 
 eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
-                                   block_variant_t const &block, State const &state0,
-                                   int64_t neigvals, double precision,
-                                   int64_t max_iterations, bool force_complex,
+                                   block_variant_t const &block,
+                                   State const &state0, int64_t neigvals,
+                                   double precision, int64_t max_iterations,
+                                   bool force_complex,
                                    double deflation_tol) try {
   if (neigvals < 1) {
     XDIAG_THROW("Argument \"neigvals\" needs to be >= 1");
@@ -111,7 +112,6 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
   return eigs_lanczos_result_t();
 }
 
-
 // starting from random vector
 eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
                                    block_variant_t const &block,
@@ -135,8 +135,9 @@ eigs_lanczos_result_t eigs_lanczos(BondList const &bonds,
   fill(state0, RandomState(random_seed));
 
   // Perform first run to compute eigenvalues
-  auto r = eigvals_lanczos_inplace(bonds, block, state0, neigvals, precision, max_iterations,
-                           force_complex, deflation_tol);
+  auto r =
+      eigvals_lanczos_inplace(bonds, block, state0, neigvals, precision,
+                              max_iterations, force_complex, deflation_tol);
 
   // Perform second run to compute the eigenvectors
   arma::mat tmat = arma::diagmat(r.alphas);
