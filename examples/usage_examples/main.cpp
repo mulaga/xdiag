@@ -190,6 +190,32 @@ bonds["J"] = 1.0;
 auto [e0, gs] = eig0(bonds, block);
 // --8<-- [end:eig0]
 }
+
+{
+// --8<-- [start:eigvals_lanczos]
+int N = 8;
+int nup = N / 2;
+auto block = Spinhalf(N, nup);
+    
+// Define the nearest-neighbor Heisenberg model
+auto bonds = BondList();
+for (int i=0; i<N; ++i) {
+  bonds += Bond("HB", "J", {i, (i+1) / N});
+}
+bonds["J"] = 1.0;
+auto res = eigvals_lanczos(bonds, block);
+// --8<-- [end:eigvals_lanczos]
+}
+
+{
+// --8<-- [start:eigvals_lanczos_2]
+auto [e0, gs] = eig0(bonds, block);
+
+State state(block);
+apply(OpSum, gs, state);
+auto res = eigvals_lanczos(bonds, block, state);
+// --8<-- [end:eigvals_lanczos_2]
+}
  
   // clang-format on
 
